@@ -14,11 +14,13 @@
   "devDependencies": {
     "@azure/functions": "^1.0.1-beta1",
     "@types/node": "^16.10.3",
+    "@types/sharp": "^0.29.2",
     "npm-run-all": "^4.1.5",
     "typescript": "^3.3.3"
   },
   "dependencies": {
     "pdf2pic": "^2.1.4",
-    "pdfjs": "^2.4.6"
+    "pdfjs": "^2.4.6",
+    "sharp": "^0.29.1"
   }
 }
