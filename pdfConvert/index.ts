@@ -15,14 +15,14 @@ const blobTrigger: AzureFunction = async function (
     "Bytes"
   );
   const pdfResponse = (await fromBuffer(inputBlob, {
-    width: 425,
-    height: 600,
+    width: 707,
+    height: 1000,
   }).bulk(-1, true)) as ToBase64Response[];
   context.log(pdfResponse.length);
   const image = await sharp({
     create: {
-      width: 425,
-      height: 600 * pdfResponse.length,
+      width: 707,
+      height: 1000 * pdfResponse.length,
       channels: 3,
       background: "white",
     },
@@ -30,7 +30,7 @@ const blobTrigger: AzureFunction = async function (
     .composite(
       pdfResponse.map(({ base64 }, index) => ({
         input: Buffer.from(base64, "base64"),
-        top: index * 600,
+        top: index * 1000,
         left: 0,
       }))
     )
