@@ -18,6 +18,7 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
-    "pdf2pic": "^2.1.4"
+    "pdf2pic": "^2.1.4",
+    "pdfjs": "^2.4.6"
   }
 }
