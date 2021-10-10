@@ -5,6 +5,9 @@ FROM mcr.microsoft.com/azure-functions/node:3.0
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
+RUN apt-get update && \
+    apt-get install -y ghostscript graphicsmagick
+
 COPY . /home/site/wwwroot
 
 RUN cd /home/site/wwwroot && \
