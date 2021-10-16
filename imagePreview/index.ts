@@ -27,23 +27,27 @@ const blobTrigger: AzureFunction = async function (
   const ratio = metadata.width / metadata.height;
   const cols = ratio > 1.25 ? 2 : 1;
   const rows = ratio < 0.75 ? 2 : 1;
-  const thumbnail = await computerVisionClient.generateThumbnail(
-    400 * cols,
-    400 * rows,
-    `https://storetumi.blob.core.windows.net/tumi-photos/${context.bindingData.event}/${context.bindingData.file}.${context.bindingData.type}`,
-    {
-      smartCropping: true,
-    }
-  );
-  const chunks = [];
-  const thumbnailStream = thumbnail.readableStreamBody;
-  thumbnailStream.on("data", (chunk) => {
-    chunks.push(chunk);
-  });
-  thumbnailStream.on("end", () => {
-    const buffer = Buffer.concat(chunks);
-    context.bindings.outputBlob = buffer;
-  });
+  try{
+    const thumbnail = await computerVisionClient.generateThumbnail(
+        400 * cols,
+        400 * rows,
+        `https://storetumi.blob.core.windows.net/tumi-photos/${context.bindingData.event}/${context.bindingData.file}.${context.bindingData.type}`,
+        {
+          smartCropping: true,
+        }
+      );
+      const chunks = [];
+      const thumbnailStream = thumbnail.readableStreamBody;
+      thumbnailStream.on("data", (chunk) => {
+        chunks.push(chunk);
+      });
+      thumbnailStream.on("end", () => {
+        const buffer = Buffer.concat(chunks);
+        context.bindings.outputBlob = buffer;
+      });
+  } catch (error) {
+    context.log.error(error);
+  }
 };
 
 export default blobTrigger;
