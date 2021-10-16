@@ -32,6 +32,12 @@ const blobTrigger: AzureFunction = async function (
   const ratio = metadata.width / metadata.height;
   const cols = ratio > 1.25 ? 2 : 1;
   const rows = ratio < 0.75 ? 2 : 1;
+  context.log(`Image data
+  height: ${metadata.height}
+  width: ${metadata.width}
+  ratio: ${ratio}
+  cols: ${cols}
+  rows: ${rows}`);
   try {
     const thumbnail = await computerVisionClient.generateThumbnail(
       400 * cols,
