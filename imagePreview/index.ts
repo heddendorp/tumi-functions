@@ -16,7 +16,7 @@ const blobTrigger: AzureFunction = async function (
 ): Promise<void> {
   context.log(
     "Blob trigger function processed blob \n Name:",
-    context.bindingData.name,
+    context.bindingData.blobTrigger,
     "\n Blob Size:",
     inputBlob.length,
     "Bytes"
@@ -27,21 +27,22 @@ const blobTrigger: AzureFunction = async function (
   const ratio = metadata.width / metadata.height;
   const cols = ratio > 1.25 ? 2 : 1;
   const rows = ratio < 0.75 ? 2 : 1;
-  try{
+  try {
     const thumbnail = await computerVisionClient.generateThumbnail(
-        400 * cols,
-        400 * rows,
-        context.bindingData.uri,
-        {
-          smartCropping: true,
-        }
-      );
-      const chunks = [];
-      const thumbnailStream = thumbnail.readableStreamBody;
-      thumbnailStream.on("data", (chunk) => {
-        chunks.push(chunk);
-      });
-      const buffer = await new Promise((resolve, reject) => {
+      400 * cols,
+      400 * rows,
+      context.bindingData.uri,
+      {
+        smartCropping: true,
+      }
+    );
+    const chunks = [];
+    const thumbnailStream = thumbnail.readableStreamBody;
+    thumbnailStream.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    try {
+      const buffer = await new Promise<Buffer>((resolve, reject) => {
         thumbnailStream.on("end", () => {
           resolve(Buffer.concat(chunks));
         });
@@ -49,7 +50,11 @@ const blobTrigger: AzureFunction = async function (
           reject(err);
         });
       });
+      context.log(buffer.length);
       context.bindings.outputBlob = buffer;
+    } catch (err) {
+      context.log.error(err);
+    }
   } catch (error) {
     context.log.error(error);
   }
