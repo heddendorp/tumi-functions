@@ -21,7 +21,7 @@ const blobTrigger: AzureFunction = async function (
     inputBlob.length,
     "Bytes"
   );
-  console.dir(context.bindingData);
+  context.log(context.bindingData);
   const image = sharp(inputBlob);
   const metadata = await image.metadata();
   const ratio = metadata.width / metadata.height;
@@ -30,7 +30,7 @@ const blobTrigger: AzureFunction = async function (
   const thumbnail = await computerVisionClient.generateThumbnail(
     400 * cols,
     400 * rows,
-    context.bindingData.url,
+    `https://storetumi.blob.core.windows.net/tumi-photos/${context.bindingData.event}/${context.bindingData.file}.${context.bindingData.type}`,
     {
       smartCropping: true,
     }
