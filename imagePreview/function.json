@@ -1,0 +1,20 @@
+{
+  "bindings": [
+    {
+      "name": "inputBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "tumi-photos/{event}/{image}.{type}",
+      "datatype": "binary",
+      "connection": "storetumi_STORAGE"
+    },
+    {
+      "name": "imageBlob",
+      "type": "blob",
+      "direction": "out",
+      "path": "tumi-photos/{event}/{image}-prview.jpg",
+      "connection": "storetumi_STORAGE"
+    }
+  ],
+  "scriptFile": "../dist/imagePreview/index.js"
+}
