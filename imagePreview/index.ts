@@ -27,22 +27,26 @@ const blobTrigger: AzureFunction = async function (
   }
   context.log("\n" + JSON.stringify(context.bindingData) + "\n");
   const image = sharp(inputBlob);
-  const metadata = await image.metadata();
-  context.log("\n" + JSON.stringify(metadata) + "\n");
-  const ratio = metadata.width / metadata.height;
+  const { data, info } = await image
+    .rotate()
+    .jpeg()
+    .toBuffer({ resolveWithObject: true });
+  context.log("\n" + JSON.stringify(info) + "\n");
+  const ratio = info.width / info.height;
   const cols = ratio >= 1.25 ? 2 : 1;
   const rows = ratio <= 0.75 ? 2 : 1;
   context.log(`Image data
-  height: ${metadata.height}
-  width: ${metadata.width}
+  height: ${info.height}
+  width: ${info.width}
   ratio: ${ratio}
   cols: ${cols}
-  rows: ${rows}`);
+  rows: ${rows}
+  `);
   try {
-    const thumbnail = await computerVisionClient.generateThumbnail(
+    const thumbnail = await computerVisionClient.generateThumbnailInStream(
       400 * cols,
       400 * rows,
-      context.bindingData.uri
+      data
     );
     const chunks = [];
     const thumbnailStream = thumbnail.readableStreamBody;
@@ -62,8 +66,9 @@ const blobTrigger: AzureFunction = async function (
       const meta2 = await sharp(buffer).metadata();
       context.log(`Image data
   height: ${meta2.height}
-  width: ${meta2.width}`);
-      context.bindings.imageBlob = await sharp(buffer).jpeg().toBuffer();
+  width: ${meta2.width}
+  `);
+      context.bindings.imageBlob = buffer;
     } catch (err) {
       context.log.error(err);
     }
