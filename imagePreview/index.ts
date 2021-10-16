@@ -31,7 +31,7 @@ const blobTrigger: AzureFunction = async function (
     const thumbnail = await computerVisionClient.generateThumbnail(
         400 * cols,
         400 * rows,
-        `https://storetumi.blob.core.windows.net/tumi-photos/${context.bindingData.event}/${context.bindingData.image}.${context.bindingData.type}`,
+        context.bindingData.uri,
         {
           smartCropping: true,
         }
