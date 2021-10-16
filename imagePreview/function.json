@@ -12,7 +12,7 @@
       "name": "imageBlob",
       "type": "blob",
       "direction": "out",
-      "path": "tumi-photos/{event}/{image}-prview.jpg",
+      "path": "tumi-photos/{event}/{image}-preview.jpg",
       "connection": "storetumi_STORAGE"
     }
   ],
