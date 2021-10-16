@@ -50,7 +50,7 @@ const blobTrigger: AzureFunction = async function (
           reject(err);
         });
       });
-      context.log(buffer.length);
+      context.log(`Output length:  ${buffer.length}`);
       context.bindings.outputBlob = buffer;
     } catch (err) {
       context.log.error(err);
