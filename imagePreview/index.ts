@@ -27,11 +27,11 @@ const blobTrigger: AzureFunction = async function (
   }
   context.log(JSON.stringify(context.bindingData));
   const image = sharp(inputBlob);
-  const metadata = await image.metadata();
+  const metadata = await image.rotate().metadata();
   context.log("\n" + JSON.stringify(metadata) + "\n");
   const ratio = metadata.width / metadata.height;
-  const cols = ratio > 1.25 ? 2 : 1;
-  const rows = ratio < 0.75 ? 2 : 1;
+  const cols = ratio >= 1.25 ? 2 : 1;
+  const rows = ratio <= 0.75 ? 2 : 1;
   context.log(`Image data
   height: ${metadata.height}
   width: ${metadata.width}
@@ -59,6 +59,10 @@ const blobTrigger: AzureFunction = async function (
         });
       });
       context.log(`Output length:  ${buffer.length}`);
+      const meta2 = await sharp(buffer).rotate().metadata();
+      context.log(`Image data
+  height: ${meta2.height}
+  width: ${meta2.width}`);
       context.bindings.imageBlob = await sharp(buffer)
         .rotate()
         .jpeg()
