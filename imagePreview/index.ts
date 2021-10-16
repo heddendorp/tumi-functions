@@ -21,6 +21,10 @@ const blobTrigger: AzureFunction = async function (
     inputBlob.length,
     "Bytes"
   );
+  if(context.bindingData.blobTrigger.endsWith("preview.jpg")){
+    context.log.info("This is a preview image");
+    return;
+  }
   context.log(JSON.stringify(context.bindingData));
   const image = sharp(inputBlob);
   const metadata = await image.metadata();
