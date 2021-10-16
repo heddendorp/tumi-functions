@@ -21,13 +21,14 @@ const blobTrigger: AzureFunction = async function (
     inputBlob.length,
     "Bytes"
   );
-  if(context.bindingData.blobTrigger.endsWith("preview.jpg")){
+  if (context.bindingData.blobTrigger.endsWith("preview.jpg")) {
     context.log.info("This is a preview image");
     return;
   }
   context.log(JSON.stringify(context.bindingData));
   const image = sharp(inputBlob);
   const metadata = await image.metadata();
+  context.log("\n" + JSON.stringify(metadata) + "\n");
   const ratio = metadata.width / metadata.height;
   const cols = ratio > 1.25 ? 2 : 1;
   const rows = ratio < 0.75 ? 2 : 1;
@@ -35,10 +36,7 @@ const blobTrigger: AzureFunction = async function (
     const thumbnail = await computerVisionClient.generateThumbnail(
       400 * cols,
       400 * rows,
-      context.bindingData.uri,
-      {
-        smartCropping: true,
-      }
+      context.bindingData.uri
     );
     const chunks = [];
     const thumbnailStream = thumbnail.readableStreamBody;
@@ -55,7 +53,10 @@ const blobTrigger: AzureFunction = async function (
         });
       });
       context.log(`Output length:  ${buffer.length}`);
-      context.bindings.imageBlob = buffer;
+      context.bindings.imageBlob = await sharp(buffer)
+        .rotate()
+        .jpeg()
+        .toBuffer();
     } catch (err) {
       context.log.error(err);
     }
