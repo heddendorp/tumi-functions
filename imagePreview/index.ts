@@ -41,10 +41,15 @@ const blobTrigger: AzureFunction = async function (
       thumbnailStream.on("data", (chunk) => {
         chunks.push(chunk);
       });
-      thumbnailStream.on("end", () => {
-        const buffer = Buffer.concat(chunks);
-        context.bindings.outputBlob = buffer;
+      const buffer = await new Promise((resolve, reject) => {
+        thumbnailStream.on("end", () => {
+          resolve(Buffer.concat(chunks));
+        });
+        thumbnailStream.on("error", (err) => {
+          reject(err);
+        });
       });
+      context.bindings.outputBlob = buffer;
   } catch (error) {
     context.log.error(error);
   }
