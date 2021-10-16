@@ -21,6 +21,7 @@ const blobTrigger: AzureFunction = async function (
     inputBlob.length,
     "Bytes"
   );
+  console.dir(context.bindingData);
   const image = sharp(inputBlob);
   const metadata = await image.metadata();
   const ratio = metadata.width / metadata.height;
