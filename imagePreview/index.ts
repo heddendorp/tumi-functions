@@ -33,8 +33,8 @@ const blobTrigger: AzureFunction = async function (
     .toBuffer({ resolveWithObject: true });
   context.log("\n" + JSON.stringify(info) + "\n");
   const ratio = info.width / info.height;
-  const cols = ratio >= 1.25 ? 2 : 1;
-  const rows = ratio <= 0.75 ? 2 : 1;
+  const cols = ratio > 1.25 ? 2 : 1;
+  const rows = ratio < 0.75 ? 2 : 1;
   context.log(`Image data
   height: ${info.height}
   width: ${info.width}
