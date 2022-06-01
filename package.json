@@ -22,6 +22,6 @@
     "@azure/cognitiveservices-computervision": "^8.1.0",
     "pdf2pic": "^2.1.4",
     "pdfjs": "^2.4.6",
-    "sharp": "^0.29.1"
+    "sharp": "^0.30.5"
   }
 }
